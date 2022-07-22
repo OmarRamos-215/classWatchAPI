@@ -24,9 +24,7 @@ def get_test():
 #Classrooms
 @app.route('/classrooms/', methods=['GET'])
 def get_classrooms():
-    collection_name= database.db['classrooms']
-
-    request= list(collection_name.find())
+    request= list(database.db.classrooms.find())
     classrooms= []
     for classroom in request:
         del classroom['_id']
@@ -35,9 +33,7 @@ def get_classrooms():
 
 @app.route('/classrooms/<room>/', methods=['GET'])
 def get_classroom(room):
-    collection_name= database.db['classrooms']
-
-    request= list(collection_name.find({'classrooms.id_classroom' : room}, {'classrooms.$' : 1}))
+    request= list(database.db.classrooms.find({'classrooms.id_classroom' : room}, {'classrooms.$' : 1}))
     classrooms= []
     for classroom in request:
         del classroom['_id']
@@ -46,8 +42,7 @@ def get_classroom(room):
 #Reports
 @app.route('/reports/<room>/', methods=['GET'])
 def get_reports(room):
-    collection_name= database.db['reports']
-    request= list(collection_name.find({'classroom': room, 'is_active': True}))
+    request= list(database.db.reports.find({'classroom': room, 'is_active': True}))
     reports= []
     for report in request:
         del report['_id']
@@ -57,11 +52,10 @@ def get_reports(room):
 
 @app.route('/reports/', methods=['POST'])
 def post_report():
-    collection_name= database.db['reports']
     date= datetime.now()
     args = post_report_args.parse_args()
     report_id= str(date.year)+'-'+str(date.month)+'-'+str(date.day)+'-'+str(args['reporter_badge'])
-    collection_name.insert_one({
+    database.db.reports.insert_one({
         'report_id' : report_id,
         'classroom': args['classroom'],
         'reporter_badge': args['reporter_badge'],
@@ -74,15 +68,13 @@ def post_report():
 
 @app.route('/deactivate/<report_id>/', methods=['PATCH'])
 def patch_report(report_id):
-    collection_name= database.db['reports']
-    collection_name.update_one({'report_id' : report_id}, {'$set': {'is_active' : False}})
+    database.db.reports.update_one({'report_id' : report_id}, {'$set': {'is_active' : False}})
     return jsonify({'Message' : 'Deactivaded'})
 
 #Tags
 @app.route('/tags/', methods=['GET'])
 def get_tags():
-    collection_name= database.db['tags']
-    request= list(collection_name.find())
+    request= list(database.db.tags.find())
     tags= []
     for tag in request:
         del tag['_id']
@@ -92,9 +84,7 @@ def get_tags():
 #Users
 @app.route('/users/', methods=['GET'])
 def get_users():
-    collection_name= database.db['users']
-
-    request= list(collection_name.find())
+    request= list(database.db.users.find())
     users= []
     for user in request:
         del user['_id']
@@ -103,8 +93,7 @@ def get_users():
 
 @app.route('/users/<badge>/', methods=['GET'])
 def get_user(badge):
-    collection_name= database.db['users']
-    request= collection_name.find_one({'badge' : badge})
+    request= database.db.users.find_one({'badge' : badge})
     del request['_id']
     return jsonify(request)
 
