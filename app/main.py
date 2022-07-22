@@ -108,5 +108,3 @@ def get_user(badge):
     del request['_id']
     return jsonify(request)
 
-if __name__== '__main__':
-    app.run(load_dotenv=True, port=8080)
