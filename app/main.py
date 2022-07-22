@@ -26,7 +26,7 @@ def get_test():
 def get_classrooms():
     collection_name= database.db['classrooms']
 
-    request= collection_name.find()
+    request= list(collection_name.find())
     classrooms= []
     for classroom in request:
         del classroom['_id']
@@ -37,7 +37,7 @@ def get_classrooms():
 def get_classroom(room):
     collection_name= database.db['classrooms']
 
-    request= collection_name.find({'classrooms.id_classroom' : room}, {'classrooms.$' : 1})
+    request= list(collection_name.find({'classrooms.id_classroom' : room}, {'classrooms.$' : 1}))
     classrooms= []
     for classroom in request:
         del classroom['_id']
@@ -47,7 +47,7 @@ def get_classroom(room):
 @app.route('/reports/<room>/', methods=['GET'])
 def get_reports(room):
     collection_name= database.db['reports']
-    request= collection_name.find({'classroom': room, 'is_active': True})
+    request= list(collection_name.find({'classroom': room, 'is_active': True}))
     reports= []
     for report in request:
         del report['_id']
@@ -82,7 +82,7 @@ def patch_report(report_id):
 @app.route('/tags/', methods=['GET'])
 def get_tags():
     collection_name= database.db['tags']
-    request= collection_name.find()
+    request= list(collection_name.find())
     tags= []
     for tag in request:
         del tag['_id']
@@ -94,7 +94,7 @@ def get_tags():
 def get_users():
     collection_name= database.db['users']
 
-    request= collection_name.find()
+    request= list(collection_name.find())
     users= []
     for user in request:
         del user['_id']
