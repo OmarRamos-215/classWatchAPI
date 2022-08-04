@@ -17,6 +17,11 @@ post_report_args.add_argument("reporter_badge", type=int, help="ERROR reporter_b
 post_report_args.add_argument("tag", type=str, help="ERROR tag is required", required=True)
 post_report_args.add_argument("reason", type=str, help="ERROR reason is required", required=True)
 
+post_reading_args= reqparse.RequestParser()
+
+post_reading_args.add_argument("id_classroom", type=str, help="ERROR id_classroom is required", required=True)
+post_reading_args.add_argument("readings", type=str, help="ERROR id_classroom is required", required=True)
+
 @app.route('/test/', methods=['GET'])
 def get_test():
     return jsonify({"message":"You are connected"})
@@ -39,6 +44,35 @@ def get_classroom(room):
         del classroom['_id']
         return jsonify(classroom)
 
+#Readings
+@app.route('/readings/', methods=['POST'])
+def post_readings():
+    date= datetime.now()
+    args= post_reading_args.parse_args()
+    reading_id= str(date.year)+'-'+str(date.month)+'-'+str(date.day)+'-'+str(date.hour)+str(date.minute)+str(date.second)+'-'+str(args['id_classroom'])
+    values= args['readings']
+    arr= values.split(",")
+    arr[0]= int(arr[0])
+    arr[1]= int(arr[1])
+    if arr[1]==1:
+        light=True
+    else:
+        light=False
+    database.db.readings.insert_one({
+        "reading_id" : reading_id,
+        "id_classroom" : args["id_classroom"],
+        "temperature" : arr[0],
+        "light" : light,
+        "date" : date
+    })
+    return jsonify({
+        "reading_id" : reading_id,
+        "id_classroom" : args["id_classroom"],
+        "temperature" : arr[0],
+        "light" : light,
+        "date" : date
+    })
+
 #Reports
 @app.route('/reports/<room>/', methods=['GET'])
 def get_reports(room):
@@ -54,7 +88,7 @@ def get_reports(room):
 def post_report():
     date= datetime.now()
     args = post_report_args.parse_args()
-    report_id= str(date.year)+'-'+str(date.month)+'-'+str(date.day)+'-'+str(args['reporter_badge'])
+    report_id= str(date.year)+'-'+str(date.month)+'-'+str(date.day)+'-'+str(date.hour)+str(date.minute)+str(date.second)+'-'+str(args['reporter_badge'])
     database.db.reports.insert_one({
         'report_id' : report_id,
         'classroom': args['classroom'],
