@@ -39,12 +39,19 @@ def get_classrooms():
 @app.route('/classrooms/<room>/', methods=['GET'])
 def get_classroom(room):
     request= list(database.db.classrooms.find({'classrooms.id_classroom' : room}, {'classrooms.$' : 1}))
-    classrooms= []
     for classroom in request:
         del classroom['_id']
         return jsonify(classroom)
 
 #Readings
+@app.route('/readings/<room>/', methods=['GET'])
+def get_readings(room):
+    request= list(database.db.readings.find({'id_classroom' : room}).sort('date',-1))
+    for reading in request:
+        del reading['_id']
+        return jsonify(reading)
+
+
 @app.route('/readings/', methods=['POST'])
 def post_readings():
     date= datetime.now()
