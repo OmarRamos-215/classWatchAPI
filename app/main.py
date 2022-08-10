@@ -29,7 +29,7 @@ def get_test():
 #Classrooms
 @app.route('/classrooms/', methods=['GET'])
 def get_classrooms():
-    request= list(database.db.classrooms.find())
+    request= list(database.db.classrooms2.find())
     classrooms= []
     for classroom in request:
         del classroom['_id']
@@ -38,10 +38,9 @@ def get_classrooms():
 
 @app.route('/classrooms/<room>/', methods=['GET'])
 def get_classroom(room):
-    request= list(database.db.classrooms.find({'classrooms.id_classroom' : room}, {'classrooms.$' : 1}))
-    for classroom in request:
-        del classroom['_id']
-        return jsonify(classroom)
+    request= database.db.classrooms.find_one({'id_classroom' : room})
+    del request['_id']
+    return jsonify(request)
 
 #Readings
 @app.route('/readings/<room>/', methods=['GET'])
