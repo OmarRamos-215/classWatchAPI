@@ -143,6 +143,7 @@ def get_users():
 
 @app.route('/users/<badge>/', methods=['GET'])
 def get_user(badge):
+    badge= int(badge)
     request= database.db.users.find_one({'badge' : badge})
     del request['_id']
     return jsonify(request)
