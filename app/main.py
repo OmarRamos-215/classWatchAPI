@@ -22,6 +22,16 @@ post_reading_args= reqparse.RequestParser()
 post_reading_args.add_argument("id_classroom", type=str, help="ERROR id_classroom is required", required=True)
 post_reading_args.add_argument("readings", type=str, help="ERROR id_classroom is required", required=True)
 
+post_user_args= reqparse.RequestParser()
+
+post_user_args.add_argument("badge", type=int, help="ERROR badge is required", required=True)
+post_user_args.add_argument("email", type=str, help="ERROR email is required", required=True)
+post_user_args.add_argument("firstName", type=str, help="ERROR firstName is required", required=True)
+post_user_args.add_argument("lastName", type=str, help="ERROR lastName is required", required=True)
+post_user_args.add_argument("password", type=str, help="ERROR password is required", required=True)
+
+
+
 @app.route('/test/', methods=['GET'])
 def get_test():
     return jsonify({"message":"You are connected"})
@@ -137,3 +147,15 @@ def get_user(badge):
     del request['_id']
     return jsonify(request)
 
+@app.route('/new/user/', methods=['POST'])
+def post_user():
+    args = post_user_args.parse_args()
+    database.db.users.insert_one({
+        'badge' : args['badge'],
+        'email' : args['email'],
+        'firstName' : args['firstName'],
+        'lastName': args['lastName'],
+        'password' : args['password'],
+        'privilege' : False
+    })
+    return jsonify(args)
