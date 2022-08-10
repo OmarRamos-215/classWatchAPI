@@ -29,7 +29,7 @@ def get_test():
 #Classrooms
 @app.route('/classrooms/', methods=['GET'])
 def get_classrooms():
-    request= list(database.db.classrooms2.find())
+    request= list(database.db.classrooms.find())
     classrooms= []
     for classroom in request:
         del classroom['_id']
